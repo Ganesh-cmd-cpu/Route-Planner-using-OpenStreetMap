@@ -1,0 +1,7 @@
+Python
+
+OSMnx – to get data from OpenStreetMap
+
+NetworkX – to compute the shortest path
+
+Matplotlib / Folium – to visualize the map
