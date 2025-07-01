@@ -1,0 +1,32 @@
+import osmnx as ox
+import networkx as nx
+import folium
+
+# Define start and end locations
+place = "Hyderabad, India"
+start_point = (17.385044, 78.486671)  # Example coordinates
+end_point = (17.435044, 78.496671)
+
+# Get the road network for driving
+G = ox.graph_from_place(place, network_type='drive')
+
+# Convert coordinates to the nearest network nodes
+orig_node = ox.distance.nearest_nodes(G, start_point[1], start_point[0])
+dest_node = ox.distance.nearest_nodes(G, end_point[1], end_point[0])
+
+# Calculate the shortest path using Dijkstra
+shortest_route = nx.shortest_path(G, orig_node, dest_node, weight='length')
+
+# Get coordinates of the route
+route_coords = [(G.nodes[node]['y'], G.nodes[node]['x']) for node in shortest_route]
+
+# Create a Folium map
+m = folium.Map(location=start_point, zoom_start=14)
+folium.Marker(location=start_point, tooltip='Start', icon=folium.Icon(color='green')).add_to(m)
+folium.Marker(location=end_point, tooltip='End', icon=folium.Icon(color='red')).add_to(m)
+
+# Add the route
+folium.PolyLine(route_coords, color="blue", weight=5, opacity=0.7).add_to(m)
+
+# Save to HTML
+m.save("route_map.html")
